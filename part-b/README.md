@@ -6,6 +6,8 @@ The Part A FastAPI credit risk API should be deployed using **Amazon API Gateway
 
 The trained model artifact is stored in **S3** as a versioned `.pkl`, for example `s3://niwas-credit-models/models/credit-risk/v1.pkl`. On Lambda cold start, the function downloads the active model version from S3 into `/tmp`, loads it into memory, and reuses the model for warm invocations. Lambda logs, structured prediction logs, errors, and latency metrics go to **CloudWatch Logs and Alarms**.
 
+![AWS architecture diagram](architecture.png)
+
 See [`architecture.drawio`](architecture.drawio) for the editable architecture diagram.
 
 ## Q1 - Lambda vs ECS

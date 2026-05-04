@@ -1,0 +1,135 @@
+<mxfile host="65bd71144e">
+    <diagram id="niwas-part-b-aws" name="Part B AWS Architecture">
+        <mxGraphModel dx="4360" dy="1251" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="public" value="Public callers" style="swimlane;whiteSpace=wrap;html=1;rounded=0;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="-170" y="80" width="260" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="salesforce" value="Salesforce&#xa;Named Credential&#xa;OAuth/JWT or API key" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#00A1E0;strokeColor=#0070D2;fontColor=#ffffff;fontStyle=1;align=center;verticalAlign=middle;" parent="public" vertex="1">
+                    <mxGeometry x="40" y="40" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="analytics" value="Internal Analytics Team&#xa;separate API key / JWT" style="shape=umlActor;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontColor=#1f4e79;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="public" vertex="1">
+                    <mxGeometry x="97.5" y="160" width="32.5" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="aws" value="AWS&amp;nbsp;" style="swimlane;whiteSpace=wrap;html=1;rounded=0;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="30" width="1440" height="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="publicBoundary" value="Public HTTPS Entry" style="swimlane;whiteSpace=wrap;html=1;rounded=0;strokeColor=#82b366;fillColor=#d5e8d4;fontStyle=1;" parent="aws" vertex="1">
+                    <mxGeometry x="35" y="50" width="295" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="apigw" value="Amazon API Gateway&#xa;HTTPS endpoint&#xa;/predict, /predict/batch, /model/info, /health" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;whiteSpace=wrap;html=1;fillColor=#8C4FFF;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="publicBoundary" vertex="1">
+                    <mxGeometry x="45" y="72" width="195" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="auth" value="Auth Controls&#xa;Usage plans / API keys&#xa;Cognito or JWT authorizer" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;whiteSpace=wrap;html=1;fillColor=#DD344C;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="publicBoundary" vertex="1">
+                    <mxGeometry x="45" y="290" width="195" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="computeBoundary" value="Serverless compute (managed, outside VPC)" style="swimlane;whiteSpace=wrap;html=1;rounded=0;strokeColor=#9673a6;fillColor=#e1d5e7;fontStyle=1;" parent="aws" vertex="1">
+                    <mxGeometry x="430" y="50" width="300" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="lambda" value="AWS Lambda&#xa;FastAPI + Mangum adapter&#xa;loads model on cold start&#xa;reuses model on warm calls" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;whiteSpace=wrap;html=1;fillColor=#FF9900;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="computeBoundary" vertex="1">
+                    <mxGeometry x="50" y="70" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="iam" value="IAM Execution Role&#xa;least privilege: S3 read, Secrets read, CloudWatch write" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;whiteSpace=wrap;html=1;fillColor=#DD344C;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="computeBoundary" vertex="1">
+                    <mxGeometry x="50" y="270" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="dataBoundary" value="AWS managed services (private by IAM, not public)" style="swimlane;whiteSpace=wrap;html=1;rounded=0;strokeColor=#b85450;fillColor=#f8cecc;fontStyle=1;" parent="aws" vertex="1">
+                    <mxGeometry x="790" y="50" width="360" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" value="Amazon S3&#xa;versioned model artifacts&#xa;models/credit-risk/v1.pkl&#xa;models/credit-risk/v2.pkl" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;whiteSpace=wrap;html=1;fillColor=#7AA116;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="dataBoundary" vertex="1">
+                    <mxGeometry x="90" y="45" width="190" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="secrets" value="AWS Secrets Manager&#xa;integration secrets / API credentials" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;whiteSpace=wrap;html=1;fillColor=#DD344C;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="dataBoundary" vertex="1">
+                    <mxGeometry x="90" y="175" width="190" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="cloudwatch" value="Amazon CloudWatch&#xa;logs, metrics, alarms&#xa;5xx, latency, Lambda errors" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;whiteSpace=wrap;html=1;fillColor=#8C4FFF;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="dataBoundary" vertex="1">
+                    <mxGeometry x="90" y="285" width="200" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="ops" value="Operations / On-call&#xa;Alarm notifications&#xa;investigate and rollback" style="shape=umlActor;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="aws" vertex="1">
+                    <mxGeometry x="1270" y="305" width="55" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="deploy" value="Monthly Model Update&#xa;1. retrain offline&#xa;2. upload v2.pkl to S3&#xa;3. publish Lambda version&#xa;4. shift prod alias / rollback if needed" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codepipeline;whiteSpace=wrap;html=1;fillColor=#8C4FFF;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="aws" vertex="1">
+                    <mxGeometry x="480" y="510" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="failure" value="Failure path&#xa;Lambda error or timeout -&gt; API Gateway 5xx&#xa;CloudWatch alarm -&gt; rollback alias/model pointer" style="shape=mxgraph.basic.exclamation;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#ff0000;fontColor=#990000;verticalLabelPosition=bottom;verticalAlign=top;align=center;" parent="aws" vertex="1">
+                    <mxGeometry x="60" y="527.5" width="240" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge3" value="authorize caller" style="endArrow=block;html=1;rounded=0;strokeColor=#82b366;" parent="aws" source="apigw" target="auth" edge="1">
+                    <mxGeometry x="0.6667" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge4" value="invoke" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;" parent="aws" source="apigw" target="lambda" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge5" value="assume role" style="endArrow=block;html=1;rounded=0;strokeColor=#9673a6;" parent="aws" source="lambda" target="iam" edge="1">
+                    <mxGeometry x="0.5523" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge6" value="cold start: read active .pkl" style="endArrow=block;html=1;rounded=0;strokeColor=#b85450;" parent="aws" source="lambda" target="s3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge7" value="read secrets if required" style="endArrow=block;html=1;rounded=0;strokeColor=#b85450;" parent="aws" source="lambda" target="secrets" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="860" y="240"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge8" value="structured logs + metrics" style="endArrow=block;html=1;rounded=0;strokeColor=#b85450;" parent="aws" source="lambda" target="cloudwatch" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="358"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge9" value="alarms" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" parent="aws" source="cloudwatch" target="ops" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge10" value="upload new model" style="endArrow=block;html=1;rounded=0;strokeColor=#d79b00;" parent="aws" source="deploy" target="s3" edge="1">
+                    <mxGeometry x="-0.5545" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="760" y="535"/>
+                            <mxPoint x="760" y="360"/>
+                            <mxPoint x="840" y="195"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge11" value="publish version &lt;br&gt;/ shift alias" style="endArrow=block;html=1;rounded=0;strokeColor=#d79b00;exitX=0.012;exitY=0.563;exitDx=0;exitDy=0;exitPerimeter=0;" parent="aws" source="deploy" target="lambda" edge="1">
+                    <mxGeometry x="-0.6136" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="460" y="538"/>
+                            <mxPoint x="460" y="470"/>
+                            <mxPoint x="460" y="330"/>
+                            <mxPoint x="460" y="180"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge12" value="5xx + alarm" style="endArrow=block;html=1;rounded=0;strokeColor=#ff0000;fontColor=#990000;" parent="aws" source="lambda" target="failure" edge="1">
+                    <mxGeometry x="0.6653" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="315" y="170"/>
+                            <mxPoint x="315" y="260"/>
+                            <mxPoint x="315" y="490"/>
+                            <mxPoint x="315" y="565"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="4" value="" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;whiteSpace=wrap;html=1;fillColor=#8C4FFF;strokeColor=none;fontColor=#232F3E;verticalLabelPosition=bottom;verticalAlign=top;align=center;" vertex="1" parent="aws">
+                    <mxGeometry x="80" y="540" width="200" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge1" value="HTTPS request" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;" parent="1" source="salesforce" target="apigw" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge2" value="HTTPS request" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;" parent="1" source="analytics" target="apigw" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
